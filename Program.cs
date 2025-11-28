@@ -1,3 +1,5 @@
+using MovieAppApi.Src.Core.Services.Environment;
+
 namespace MovieAppApi;
 
 public class Program
@@ -5,6 +7,8 @@ public class Program
   public static void Main(string[] args)
   {
     var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddSingleton<IEnvService>(new EnvService());
+
     builder.Services.AddControllers();
 
     // Add Swagger/OpenAPI support
