@@ -22,12 +22,17 @@ public class EnvService : IEnvService
     [Required(AllowEmptyStrings = false)]
     public string TmdbApiKey { get; }
 
+
+    [Required(AllowEmptyStrings = false)]
+    public string DatabaseUrl { get; }
+
     private readonly IConfiguration _configuration;
 
     public Variables(IConfiguration configuration)
     {
       _configuration = configuration;
       TmdbApiKey = GetMandatoryVariable("TMDB_API_KEY");
+      DatabaseUrl = GetMandatoryVariable("DATABASE_URL");
       Validate();
     }
 
