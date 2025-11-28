@@ -18,7 +18,7 @@ public class TmdbService : IFetchMoviesService
 
   public async Task<SearchMoviesResultModel> SearchMoviesAsync(SearchMoviesRequestQueryModel query)
   {
-    var url = $"{_baseUrl}/search/movie?api_key={_apiKey}&query={query.SearchTerm}&language={query.Language}";
+    var url = $"{_baseUrl}/search/movie?api_keys={_apiKey}&query={query.SearchTerm}&language={query.Language}";
     var response = await _httpClient.GetAsync(url);
     if (!response.IsSuccessStatusCode)
     {

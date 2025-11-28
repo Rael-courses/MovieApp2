@@ -1,3 +1,4 @@
+using MovieAppApi.Src.Core.Middlewares;
 using MovieAppApi.Src.Core.Services.Environment;
 using MovieAppApi.Src.Core.Services.FetchMovies;
 using MovieAppApi.Src.Core.Services.FetchMovies.Tmdb;
@@ -23,6 +24,8 @@ public class Program
     builder.Services.AddSwaggerGen();
 
     var app = builder.Build();
+
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
 
     // Configure Swagger middleware
     if (app.Environment.IsDevelopment())

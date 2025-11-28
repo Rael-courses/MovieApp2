@@ -45,5 +45,6 @@ public class MoviesController : BaseController<MoviesController>
     };
 
     return Ok(dto);
+
   }
 }
