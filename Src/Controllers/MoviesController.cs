@@ -6,8 +6,10 @@ namespace MovieAppApi.Src.Controllers;
 
 public class MoviesController : BaseController<MoviesController>
 {
-  public MoviesController(ILogger<MoviesController> logger) : base(logger)
+  private readonly IMovieService _movieService;
+  public MoviesController(ILogger<MoviesController> logger, IMovieService movieService) : base(logger)
   {
+    _movieService = movieService;
   }
 
   [HttpGet]
@@ -18,6 +20,16 @@ public class MoviesController : BaseController<MoviesController>
       language: queryDto.language
     );
 
-    return Ok(queryModel);
+    var model = await _movieService.GetMovies(queryModel);
+
+    var dto = new SearchMoviesResponseDto
+    {
+      page = 0,
+      results = [],
+      total_pages = 0,
+      total_results = 0
+    };
+
+    return Ok(dto);
   }
 }
