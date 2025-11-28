@@ -1,14 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using MovieAppApi.Src.Core.Exceptions;
-using MovieAppApi.Src.Core.Services.Movie;
 using MovieAppApi.Src.Models.CreatePlaylist;
-using MovieAppApi.Src.Models.Movie;
-using MovieAppApi.Src.Models.SearchMovies;
 using MovieAppApi.Src.Views.DTO.CreatePlaylist;
-using MovieAppApi.Src.Views.DTO.GetMovie;
-using MovieAppApi.Src.Views.DTO.Movie;
 using MovieAppApi.Src.Views.DTO.Playlist;
-using MovieAppApi.Src.Views.DTO.SearchMovies;
 
 namespace MovieAppApi.Src.Controllers;
 
