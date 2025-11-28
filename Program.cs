@@ -1,4 +1,7 @@
 using MovieAppApi.Src.Core.Services.Environment;
+using MovieAppApi.Src.Core.Services.FetchMovies;
+using MovieAppApi.Src.Core.Services.FetchMovies.Tmdb;
+using MovieAppApi.Src.Core.Services.Movie;
 
 namespace MovieAppApi;
 
@@ -8,6 +11,10 @@ public class Program
   {
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton<IEnvService>(new EnvService());
+
+    // Register services with HttpClientFactory
+    builder.Services.AddScoped<IMovieService, MovieService>();
+    builder.Services.AddHttpClient<IFetchMoviesService, TmdbService>();
 
     builder.Services.AddControllers();
 
