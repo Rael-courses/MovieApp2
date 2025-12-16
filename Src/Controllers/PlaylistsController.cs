@@ -1,14 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using MovieAppApi.Src.Core.Services.Playlist;
 using MovieAppApi.Src.Models.CreatePlaylist;
 using MovieAppApi.Src.Views.DTO.CreatePlaylist;
 using MovieAppApi.Src.Views.DTO.Playlist;
 
 namespace MovieAppApi.Src.Controllers;
 
-public class PlaylistsController : BaseController<MoviesController>
+public class PlaylistsController : BaseController<PlaylistsController>
 {
   private readonly IPlaylistService _playlistService;
-  public PlaylistsController(ILogger<MoviesController> logger, IPlaylistService playlistService) : base(logger)
+  public PlaylistsController(
+    ILogger<PlaylistsController> logger,
+    IPlaylistService playlistService
+  ) : base(logger)
   {
     _playlistService = playlistService;
   }
@@ -22,7 +26,7 @@ public class PlaylistsController : BaseController<MoviesController>
       movieIds: requestDto.movie_ids
     );
 
-    var model = await _playlistService.CreatePlaylistAsync(requestDto);
+    var model = await _playlistService.CreatePlaylistAsync(requestModel);
 
     var dto = new PlaylistDto
     {
@@ -32,6 +36,6 @@ public class PlaylistsController : BaseController<MoviesController>
       movie_ids = model.MovieIds
     };
 
-    return Ok(dto);
+    return CreatedAtAction("", new { id = model.Id }, dto);
   }
 }

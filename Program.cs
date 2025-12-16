@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using MovieAppApi.Src.Core.Middlewares;
 using MovieAppApi.Src.Core.Repositories;
+using MovieAppApi.Src.Core.Repositories.Playlist;
 using MovieAppApi.Src.Core.Services.Environment;
 using MovieAppApi.Src.Core.Services.FetchMovies;
 using MovieAppApi.Src.Core.Services.FetchMovies.Tmdb;
 using MovieAppApi.Src.Core.Services.Movie;
+using MovieAppApi.Src.Core.Services.Playlist;
 
 namespace MovieAppApi;
 
@@ -19,8 +21,12 @@ public class Program
     builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite($"Data Source={envService.Vars.DatabaseUrl}"));
 
     // Register services with HttpClientFactory
-    builder.Services.AddScoped<IMovieService, MovieService>();
     builder.Services.AddHttpClient<IFetchMoviesService, TmdbService>();
+
+    // Register services
+    builder.Services.AddScoped<IMovieService, MovieService>();
+    builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+    builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
 
     builder.Services.AddControllers();
 

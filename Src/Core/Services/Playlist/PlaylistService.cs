@@ -1,0 +1,24 @@
+using MovieAppApi.Src.Core.Repositories.Entities;
+using MovieAppApi.Src.Models.CreatePlaylist;
+using MovieAppApi.Src.Models.Playlist;
+
+namespace MovieAppApi.Src.Core.Services.Playlist;
+
+public class PlaylistService : IPlaylistService
+{
+  private readonly IPlaylistRepository _playlistRepository;
+
+  public PlaylistService(
+    IPlaylistRepository playlistRepository
+  )
+  {
+    _playlistRepository = playlistRepository;
+  }
+
+  public async Task<PlaylistModel> CreatePlaylistAsync(CreatePlaylistRequestModel requestModel)
+  {
+    var createdPlaylistModel = await _playlistRepository.CreatePlaylistAsync(requestModel);
+
+    return createdPlaylistModel;
+  }
+}
