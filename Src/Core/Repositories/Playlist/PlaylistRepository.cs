@@ -66,4 +66,43 @@ public class PlaylistRepository : IPlaylistRepository
       playlistEntity.UpdatedAt
     );
   }
+
+  public async Task<ICollection<PlaylistModel>> GetPlaylistsAsync()
+  {
+    var playlistsEntities = await _appDbContext.Playlists
+      .Include(p => p.PlaylistJoinMovies)
+      .ToListAsync();
+
+    return playlistsEntities.Select(p => new PlaylistModel(
+      p.Id,
+      p.Name,
+      p.Description,
+      p.PlaylistJoinMovies.Select(pjm => pjm.MovieId).ToList(),
+      p.CreatedAt,
+      p.UpdatedAt
+    )).ToList();
+  }
+
+  public async Task<PlaylistModel?> GetPlaylistAsync(int playlistId)
+  {
+    var playlistEntity = await _appDbContext.Playlists
+      .Include(p => p.PlaylistJoinMovies)
+      .FirstOrDefaultAsync(p => p.Id == playlistId);
+
+    if (playlistEntity == null)
+    {
+      return null;
+    }
+
+    var model = new PlaylistModel(
+      playlistEntity.Id,
+      playlistEntity.Name,
+      playlistEntity.Description,
+      playlistEntity.PlaylistJoinMovies.Select(pjm => pjm.MovieId).ToList(),
+      playlistEntity.CreatedAt,
+      playlistEntity.UpdatedAt
+    );
+
+    return model;
+  }
 }

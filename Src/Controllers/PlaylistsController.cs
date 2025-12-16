@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MovieAppApi.Src.Core.Services.Playlist;
 using MovieAppApi.Src.Models.CreatePlaylist;
+using MovieAppApi.Src.Models.Playlist;
 using MovieAppApi.Src.Views.DTO.CreatePlaylist;
 using MovieAppApi.Src.Views.DTO.Playlist;
 
@@ -36,6 +37,43 @@ public class PlaylistsController : BaseController<PlaylistsController>
       movie_ids = model.MovieIds
     };
 
-    return CreatedAtAction("", new { id = model.Id }, dto);
+    return CreatedAtAction(nameof(GetPlaylist), new { playlistId = model.Id }, dto);
+  }
+
+  [HttpGet]
+  public async Task<IActionResult> GetPlaylists()
+  {
+    var models = await _playlistService.GetPlaylistsAsync();
+
+    var dto = models.Select(model => new PlaylistDto
+    {
+      id = model.Id,
+      name = model.Name,
+      description = model.Description,
+      movie_ids = model.MovieIds
+    }).ToList();
+
+    return Ok(dto);
+  }
+
+  [HttpGet("{playlistId}")]
+  public async Task<IActionResult> GetPlaylist(int playlistId)
+  {
+    var model = await _playlistService.GetPlaylistAsync(playlistId);
+
+    if (model == null)
+    {
+      return NotFound();
+    }
+
+    var dto = new PlaylistDto
+    {
+      id = model.Id,
+      name = model.Name,
+      description = model.Description,
+      movie_ids = model.MovieIds
+    };
+
+    return Ok(dto);
   }
 }
