@@ -8,4 +8,6 @@ public class PlaylistDto
   [Required] public required string name { get; init; }
   public string? description { get; init; }
   [Required] public required ICollection<int> movie_ids { get; init; }
+  [Required] public required DateTime created_at { get; init; }
+  [Required] public required DateTime updated_at { get; init; }
 }

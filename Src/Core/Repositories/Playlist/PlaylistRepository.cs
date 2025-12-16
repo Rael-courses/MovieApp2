@@ -28,18 +28,7 @@ public class PlaylistRepository : IPlaylistRepository
     await _appDbContext.Playlists.AddAsync(playlistEntity);
 
     // Prepare movie entities
-    var existingMovieEntities = await _appDbContext.Movies
-      .Where(m => requestModel.MovieIds.Contains(m.Id))
-      .ToListAsync();
-
-    var newMovieEntities = requestModel.MovieIds
-      .Where(id => !existingMovieEntities.Any(m => m.Id == id))
-      .Select(id => new MovieEntity
-      {
-        Id = id,
-        CreatedAt = DateTime.UtcNow,
-        UpdatedAt = DateTime.UtcNow
-      });
+    var newMovieEntities = await GetNewMovieEntitiesToAddAsync(requestModel.MovieIds);
     await _appDbContext.Movies.AddRangeAsync(newMovieEntities);
 
     // Prepare playlist join movie entities
@@ -117,5 +106,72 @@ public class PlaylistRepository : IPlaylistRepository
 
     _appDbContext.Playlists.Remove(playlistEntity);
     await _appDbContext.SaveChangesAsync();
+  }
+
+  public async Task<PlaylistModel?> UpdatePlaylistAsync(PlaylistModel requestModel)
+  {
+    var playlistEntity = await _appDbContext.Playlists
+      .Include(p => p.PlaylistJoinMovies)
+      .FirstOrDefaultAsync(p => p.Id == requestModel.Id);
+    if (playlistEntity == null)
+    {
+      return null;
+    }
+
+    // Update playlist entity primary properties
+    playlistEntity.Name = requestModel.Name;
+    playlistEntity.Description = requestModel.Description;
+    playlistEntity.UpdatedAt = DateTime.UtcNow;
+
+    var playlistJoinMovieEntitiesToRemove = playlistEntity.PlaylistJoinMovies
+      .Where(pjm => !requestModel.MovieIds.Contains(pjm.MovieId))
+      .ToList();
+    _appDbContext.PlaylistJoinMovies.RemoveRange(playlistJoinMovieEntitiesToRemove);
+
+
+    // Prepare new movie entities to add if not already in database
+    var newMovieEntities = await GetNewMovieEntitiesToAddAsync(requestModel.MovieIds);
+    await _appDbContext.Movies.AddRangeAsync(newMovieEntities);
+
+    // Prepare playlist join movie entities
+    var playlistJoinMovieEntitiesToAdd = requestModel.MovieIds
+      .Where(movieId => !playlistJoinMovieEntitiesToRemove.Any(pjm => pjm.MovieId == movieId))
+      .Select(movieId => new PlaylistJoinMovieEntity
+      {
+        PlaylistId = playlistEntity.Id,
+        MovieId = movieId,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+      }).ToList();
+    await _appDbContext.PlaylistJoinMovies.AddRangeAsync(playlistJoinMovieEntitiesToAdd);
+
+    await _appDbContext.SaveChangesAsync();
+
+    return new PlaylistModel(
+      playlistEntity.Id,
+      playlistEntity.Name,
+      playlistEntity.Description,
+      requestModel.MovieIds,
+      playlistEntity.CreatedAt,
+      playlistEntity.UpdatedAt
+    );
+  }
+
+  private async Task<ICollection<MovieEntity>> GetNewMovieEntitiesToAddAsync(ICollection<int> movieIds)
+  {
+    var existingMovieEntities = await _appDbContext.Movies
+      .Where(m => movieIds.Contains(m.Id))
+      .ToListAsync();
+
+    var newMovieEntities = movieIds
+      .Where(id => !existingMovieEntities.Any(m => m.Id == id))
+      .Select(id => new MovieEntity
+      {
+        Id = id,
+        CreatedAt = DateTime.UtcNow,
+        UpdatedAt = DateTime.UtcNow
+      }).ToList();
+
+    return newMovieEntities;
   }
 }

@@ -9,4 +9,5 @@ public interface IPlaylistService
   Task DeletePlaylistAsync(int playlistId);
   Task<PlaylistModel?> GetPlaylistAsync(int playlistId);
   Task<ICollection<PlaylistModel>> GetPlaylistsAsync();
+  Task<PlaylistModel?> UpdatePlaylistAsync(PlaylistModel requestModel);
 }

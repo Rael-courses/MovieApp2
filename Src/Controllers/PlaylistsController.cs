@@ -4,6 +4,7 @@ using MovieAppApi.Src.Models.CreatePlaylist;
 using MovieAppApi.Src.Models.Playlist;
 using MovieAppApi.Src.Views.DTO.CreatePlaylist;
 using MovieAppApi.Src.Views.DTO.Playlist;
+using MovieAppApi.Src.Views.DTO.UpdatePlaylist;
 
 namespace MovieAppApi.Src.Controllers;
 
@@ -34,7 +35,9 @@ public class PlaylistsController : BaseController<PlaylistsController>
       id = model.Id,
       name = model.Name,
       description = model.Description,
-      movie_ids = model.MovieIds
+      movie_ids = model.MovieIds,
+      created_at = model.CreatedAt,
+      updated_at = model.UpdatedAt
     };
 
     return CreatedAtAction(nameof(GetPlaylist), new { playlistId = model.Id }, dto);
@@ -50,7 +53,9 @@ public class PlaylistsController : BaseController<PlaylistsController>
       id = model.Id,
       name = model.Name,
       description = model.Description,
-      movie_ids = model.MovieIds
+      movie_ids = model.MovieIds,
+      created_at = model.CreatedAt,
+      updated_at = model.UpdatedAt
     }).ToList();
 
     return Ok(dto);
@@ -71,7 +76,9 @@ public class PlaylistsController : BaseController<PlaylistsController>
       id = model.Id,
       name = model.Name,
       description = model.Description,
-      movie_ids = model.MovieIds
+      movie_ids = model.MovieIds,
+      created_at = model.CreatedAt,
+      updated_at = model.UpdatedAt
     };
 
     return Ok(dto);
@@ -90,4 +97,43 @@ public class PlaylistsController : BaseController<PlaylistsController>
 
     return NoContent();
   }
+
+  [HttpPut("{playlistId}")]
+  public async Task<IActionResult> UpdatePlaylist([FromRoute] int playlistId, [FromBody] UpdatePlaylistRequestBodyDto requestDto)
+  {
+    if (requestDto.id != playlistId)
+    {
+      return BadRequest("Playlist ID in the request body does not match the playlist ID in the route");
+    }
+
+    var requestModel = new PlaylistModel(
+      id: requestDto.id,
+      name: requestDto.name,
+      description: requestDto.description,
+      movieIds: requestDto.movie_ids,
+      createdAt: requestDto.created_at,
+      updatedAt: requestDto.updated_at
+    );
+
+    var updatedPlaylistModel = await _playlistService.UpdatePlaylistAsync(requestModel);
+
+    if (updatedPlaylistModel == null)
+    {
+      return NotFound();
+    }
+
+    var dto = new PlaylistDto
+    {
+      id = updatedPlaylistModel.Id,
+      name = updatedPlaylistModel.Name,
+      description = updatedPlaylistModel.Description,
+      movie_ids = updatedPlaylistModel.MovieIds,
+      created_at = updatedPlaylistModel.CreatedAt,
+      updated_at = updatedPlaylistModel.UpdatedAt
+    };
+
+    return Ok(dto);
+  }
+
+
 }

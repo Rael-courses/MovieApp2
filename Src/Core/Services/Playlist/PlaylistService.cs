@@ -36,4 +36,9 @@ public class PlaylistService : IPlaylistService
   {
     await _playlistRepository.DeletePlaylistAsync(playlistId);
   }
+
+  public async Task<PlaylistModel?> UpdatePlaylistAsync(PlaylistModel requestModel)
+  {
+    return await _playlistRepository.UpdatePlaylistAsync(requestModel);
+  }
 }
