@@ -28,6 +28,9 @@ public class AppDbContext : DbContext
     modelBuilder.Entity<PlaylistEntity>()
       .HasKey(x => x.Id);
     modelBuilder.Entity<PlaylistEntity>()
+      .Property(x => x.Id)
+      .ValueGeneratedOnAdd();
+    modelBuilder.Entity<PlaylistEntity>()
       .Property(x => x.CreatedAt)
       .IsRequired();
     modelBuilder.Entity<PlaylistEntity>()
