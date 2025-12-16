@@ -105,4 +105,17 @@ public class PlaylistRepository : IPlaylistRepository
 
     return model;
   }
+
+  public async Task DeletePlaylistAsync(int playlistId)
+  {
+    var playlistEntity = await _appDbContext.Playlists
+      .FirstOrDefaultAsync(p => p.Id == playlistId);
+    if (playlistEntity == null)
+    {
+      throw new Exception("Playlist not found");
+    }
+
+    _appDbContext.Playlists.Remove(playlistEntity);
+    await _appDbContext.SaveChangesAsync();
+  }
 }

@@ -76,4 +76,18 @@ public class PlaylistsController : BaseController<PlaylistsController>
 
     return Ok(dto);
   }
+
+  [HttpDelete("{playlistId}")]
+  public async Task<IActionResult> DeletePlaylist(int playlistId)
+  {
+    var existingPlaylistModel = await _playlistService.GetPlaylistAsync(playlistId);
+    if (existingPlaylistModel == null)
+    {
+      return NotFound();
+    }
+
+    await _playlistService.DeletePlaylistAsync(playlistId);
+
+    return NoContent();
+  }
 }

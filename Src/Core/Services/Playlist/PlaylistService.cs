@@ -31,4 +31,9 @@ public class PlaylistService : IPlaylistService
   {
     return await _playlistRepository.GetPlaylistAsync(playlistId);
   }
+
+  public async Task DeletePlaylistAsync(int playlistId)
+  {
+    await _playlistRepository.DeletePlaylistAsync(playlistId);
+  }
 }
